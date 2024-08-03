@@ -148,3 +148,13 @@ class PublicMethods:
             time.sleep(2)
             tab.ele('#joinClass').click()
         tab.close()
+
+    def clllege_login(self, student_account, code):
+        try:
+            page.ele('@class=user-name').text
+        except:
+            page.ele('#login').click()
+            page.ele('#login-phone', timeout=10).click()
+            page.ele('#loginform-phone').input(student_account)
+            page.ele('#loginform-code').input(code)
+            page.ele('#mobile-login-idm-ok').click()
