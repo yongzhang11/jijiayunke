@@ -1,3 +1,3 @@
 1. pip install -r requirements.txt
-2. Ö´ĞĞ run.py
-3. ÔÚreportÏÂ²é¿´Éú³É±¨¸æ
+2. Ö´è¿è¡Œ run.py
+3. åœ¨ç›®å½•reportä¸‹æŸ¥çœ‹ç”ŸæˆæŠ¥å‘Š
