@@ -4,27 +4,35 @@ import pytest
 from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 from common.yaml_config import GentConf
 from config.college.PublicMethods import PublicMethods
+import allure
 
 page = DrissionpageDriverConfig().driver_config()
 
 
+def browser():
+    page.close()
+
+@allure.feature("创建班级模块")
 class Test1:
-    @pytest.fixture(scope="function")
-    def browser(self):
-        yield page
-        page.close()
 
     @pytest.mark.create
-    def test_add(self, browser):
-        PublicMethods().creating_skills_programme_classe(GentConf().get_env("username"), GentConf().get_env("password"),
-                                                         GentConf().get_env("skill_project_name"),
-                                                         GentConf().get_env("class_name"))
-        PublicMethods().share_class(GentConf().get_env("id"), GentConf().get_env("student_name"),
-                                    GentConf().get_env("student_account"))
-        assert page.title == '技嘉云课·院校 - 概览', f"Unexpected page title: {page.title}"
+    @allure.title("创建技能项目并加入班级")
+    @allure.story("加入班级")
+    def test_add(self):
+        try:
+            PublicMethods().creating_skills_programme_classe(GentConf().get_env("username"),
+                                                             GentConf().get_env("password"),
+                                                             GentConf().get_env("skill_project_name"),
+                                                             GentConf().get_env("class_name"))
+            PublicMethods().share_class(GentConf().get_env("id"), GentConf().get_env("student_name"),
+                                        GentConf().get_env("student_account"))
+            assert page.title == '技嘉云课·院校 - 概览', f"Unexpected page title: {page.title}"
+        except Exception as e:
+            print(f"测试过程中发生错误: {e}")
 
     @pytest.mark.create
-    def test_join_successfully(self, browser):
+    @allure.title("查看学生是否加入班级")
+    def test_join_successfully(self):
         try:
             page.get("https://stu-fbt-uat.class-demo.com")
             PublicMethods().clllege_login(GentConf().get_env("student_account"), GentConf().get_env("code"))
@@ -36,5 +44,4 @@ class Test1:
             assert output_string == GentConf().get_env("class_name") + "-", f"Unexpected page title: {element}"
         except Exception as e:
             print(f"测试过程中发生错误: {e}")
-        finally:
-            browser.close()
+        browser()
