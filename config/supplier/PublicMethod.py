@@ -3,7 +3,7 @@ from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 page = DrissionpageDriverConfig().driver_config()
 
 
-class PublicMethod:
+class PublicMethods:
     def login(self, username='15639799733', password='8NBWmJ'):
         page.get("https://content-fbt-uat.class-demo.com/login")
         page.ele('@class=form-control').input(username)
