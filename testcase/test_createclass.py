@@ -9,8 +9,12 @@ import allure
 page = DrissionpageDriverConfig().driver_config()
 
 
+@pytest.fixture(scope="class", autouse=True)
 def browser():
+    pass
+    yield
     page.close()
+
 
 @allure.feature("创建班级模块")
 class Test1:
@@ -44,4 +48,3 @@ class Test1:
             assert output_string == GentConf().get_env("class_name") + "-", f"Unexpected page title: {element}"
         except Exception as e:
             print(f"测试过程中发生错误: {e}")
-        browser()
