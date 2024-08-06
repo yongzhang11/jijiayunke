@@ -6,15 +6,16 @@ from config.supplier.PublicMethod import PublicMethods
 from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 import pytest
 import allure
+from common.yaml_config import GentConf
 
 page = DrissionpageDriverConfig().driver_config()
 
 
 @pytest.fixture(scope="class", autouse=True)
 def some_data():
-    PublicMethods().login('15639799733')
+    PublicMethods().login(GentConf().get_env("learning_course_username"))
     PublicMethods().content(1)
-    PublicMethods().import_learning_courses("内部测试学习课程0724")
+    PublicMethods().import_learning_courses(GentConf().get_env("learning_course_name"))
     yield
     page.close()
 
@@ -37,16 +38,7 @@ class TestContent:
     @allure.story("上架课程")
     def test_resource_display_correct(self):
         try:
-            lists = len(page.eles('xpath=//tbody/tr'))
-            name = []
-            for i in range(1, lists):
-                class_names = page.ele(
-                    'xpath://tbody/tr[{}]//h3/a'.format(i)).text
-                name.append(class_names.title())
-            for i in name:
-                if i == '内部测试学习课程0724':
-                    page.ele('@text()={}'.format("内部测试学习课程0724"), timeout=3).click()
-                    break
+            PublicMethods().enter_designated_learning_course("内部测试学习课程0724")
             texts = page.ele('@class=number').text
         except Exception as e:
             print(f"测试过程中发生错误: {e}")

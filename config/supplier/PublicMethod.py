@@ -29,4 +29,14 @@ class PublicMethods:
         page.ele('#importBtnZipCourse').click()
         page.ele('#course-alert-import-unpack-ok').click()
 
-
+    def enter_designated_learning_course(self,learning_course_name):
+        lists = len(page.eles('xpath=//tbody/tr'))
+        name = []
+        for i in range(1, lists):
+            class_names = page.ele(
+                'xpath://tbody/tr[{}]//h3/a'.format(i)).text
+            name.append(class_names.title())
+        for i in name:
+            if i == '内部测试学习课程0724':
+                page.ele('@text()={}'.format(learning_course_name), timeout=3).click()
+                break
