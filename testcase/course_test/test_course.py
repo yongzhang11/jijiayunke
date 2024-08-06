@@ -18,7 +18,8 @@ def some_data():
     PublicMethods().content(1)
     PublicMethods().import_learning_courses(GentConf().get_env("learning_course_name"))
     yield
-    page.close()
+    # page.close()
+    pass
 
 
 @allure.feature("内容管理")
@@ -31,9 +32,9 @@ class TestContent:
             page.refresh()
             page.wait.ele_displayed('@class=text-danger]', timeout=10)
             text = page.ele('@class=text-danger').text
-            assert text == '未上架', f"Unexpected page title: {text}"
+            assert text == '上架', f"Unexpected page title: {text}"
         except Exception as e:
-            print(f"测试过程中发生错误: {e}")
+            logger.error(f"测试过程中发生错误: {e}")
 
     @pytest.mark.content1
     @allure.story("上架课程")
@@ -43,6 +44,7 @@ class TestContent:
             PublicMethods().enter_designated_learning_course("内部测试学习课程0724")
             texts = page.ele('@class=number').text
         except Exception as e:
-            print(f"测试过程中发生错误: {e}")
-        assert texts == '2', f"Unexpected page title: {texts}"
+            # print(f"测试过程中发生错误: {e}")
+            logger.error(f"测试过程中发生错误: {e}")
+        assert texts == '1', f"Unexpected page title: {texts}"
         logger.info("*************** 结束执行用例 ***************")

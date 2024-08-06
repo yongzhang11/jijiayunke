@@ -5,6 +5,7 @@ from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 from common.yaml_config import GentConf
 from config.college.PublicMethods import PublicMethods
 import allure
+from common.logger import logger
 
 page = DrissionpageDriverConfig().driver_config()
 
@@ -32,7 +33,8 @@ class Test1:
                                         GentConf().get_env("student_account"))
             assert page.title == '技嘉云课·院校 - 概览', f"Unexpected page title: {page.title}"
         except Exception as e:
-            print(f"测试过程中发生错误: {e}")
+            # print(f"测试过程中发生错误: {e}")
+            logger.error(f"测试过程中发生错误: {e}")
 
     @pytest.mark.create
     @allure.title("查看学生是否加入班级")
@@ -47,4 +49,4 @@ class Test1:
             print(output_string)
             assert output_string == GentConf().get_env("class_name") + "-", f"Unexpected page title: {element}"
         except Exception as e:
-            print(f"测试过程中发生错误: {e}")
+            logger.error(f"测试过程中发生错误: {e}")
