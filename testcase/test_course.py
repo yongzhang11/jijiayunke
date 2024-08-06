@@ -7,6 +7,7 @@ from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 import pytest
 import allure
 from common.yaml_config import GentConf
+from common.logger import logger
 
 page = DrissionpageDriverConfig().driver_config()
 
@@ -38,8 +39,10 @@ class TestContent:
     @allure.story("上架课程")
     def test_resource_display_correct(self):
         try:
+            logger.info("*************** 开始执行用例 ***************")
             PublicMethods().enter_designated_learning_course("内部测试学习课程0724")
             texts = page.ele('@class=number').text
         except Exception as e:
             print(f"测试过程中发生错误: {e}")
         assert texts == '2', f"Unexpected page title: {texts}"
+        logger.info("*************** 结束执行用例 ***************")
