@@ -10,6 +10,8 @@ import pytest
 import allure
 from common.yaml_config import GentConf
 from common.logger import logger
+from DrissionPage.common import Keys
+from positioned_element import element
 
 page = DrissionpageDriverConfig().driver_config()
 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -101,6 +103,10 @@ class TestContent:
             page.ele('@class=btn btn-primary').click()
             # 输入课程名称
             page.ele('#createmodel-name').input("证书课程{}".format(current_date))
+            # 课程封面
+            page.set.upload_files(r"./file/{}.jpg".format('正在'))
+            page.ele('@class=holder').click()
+            page.wait.upload_paths_inputted()
             # 选择课程分类
             page.ele(
                 'xpath:/html/body/div[2]/div/div/div[2]/div/form/div[2]/div/div[2]/div/div[5]/div/div/select[1]').click()
@@ -133,12 +139,86 @@ class TestContent:
             page.ele('#courseSaveBtn').click()
             # 获取描述信息
             desc = page.ele('@class=desc').text
+            logger.info(f"课程描述: {desc}")
             # 点击某个按钮
             page.ele('@class=btn btn-outline-primary').click()
             # 设置培训环节，点击线上课程链接
             page.ele('text:线上课程').children(locator='xpath://span[@class="text-gray"]/a')[0].click()
+            # 添加课程
+            page.ele('@class=btn btn-primary').click()
+            page.ele('#listmodel-name').input('内部测试学习课程0724')
+            page.ele(
+                'xpath:/html/body/div[1]/div/div/div[2]/div/div[2]/div/table/tbody/tr[1]/td[1]/label/span[1]').click()
+            page.ele('@class=btn btn-primary addCourse').click()
+            page.ele('#ajax-add-ids-confirm-ok').click()
+            time.sleep(2)
+            page.ele('@class=btn btn-outline-primary').click()
+            title = page.ele('@class=title-content').text
+            logger.info(f"课程名称: {title}")
+            # 考试规则设置
+            page.ele('@class=title').click()
+            page.ele('text:规则设置').children(locator='xpath://span[@class="text-gray"]/a')[0].click()
+            page.ele('#settingmodel-times').click()
+            page.ele('@value=3').click()
+            page.ele('@class=btn btn-primary').click()
+            page.ele('#settingmodel-passscore').input("60")
+            page.ele('@class=btn btn-primary').click()
+            # 试卷设置
+            page.ele('@class=title').click()
+            page.ele('xpath://span[@class="text-gray"]/a').click()
+            page.ele('@class=btn btn-primary addForm').click()
+            kemuxingxi = page.ele('xpath://*[@id="w0"]/div/div').text
+            match = re.search(r'（(.*?)）', kemuxingxi).group(1)
+            logger.info(f"考试详情: {match}")
+            page.ele('@class=btn btn-secondary cancel').click()
+            # 添加试卷
+            ele = page.ele('@class=jump')
+            tab = ele.click.for_new_tab()  # 点击某个链接新建标签页
+            tab.ele('@class=btn btn-primary').click()
+            tab.ele('#create-paper-name').input('证书课程-{}'.format(current_date))
+            tab.ele('#create-paper-examTime').input('120')
+            tab.ele('#select2-create-paper-subject-container').click()
+            time.sleep(1)
+            tab.ele('@class=select2-search__field').input(match)
+            tab.actions.key_down('ENTER')  # 输入按键名称
+            tab.actions.key_down(Keys.ENTER)  # 从Keys获取按键名称
+            tab.ele('@class=btn btn-primary').click()
+            tab.ele('@class=btn btn-primary step-btn-final').click()
+            tab.ele('@class=cell addItemSub').click()
+            tab.ele('@class=form-control score-input spin-val').clear()
+            tab.ele('@class=form-control score-input spin-val').input('60')
+            tab.ele(
+                'xpath:/html/body/div[1]/div[4]/div[2]/div[1]/div[2]/ol/li/div[2]/div[2]/div[1]/div[2]/div/div/p').click()
+            tab.ele('xpath://*[@class="edit-type-text"]/div[1]/div[2]/div/div').input('证书课程')
+            tab.ele('@class=btn btn-primary success-item').click()
+            time.sleep(1)
+            tab.ele('@class=btn btn-primary publish-paper').click()
+            tab.ele('#paper-publish-ok').click()
+            tab.close()
+            # 选择试卷(正式)
+            page.ele(element.添加试卷按钮).click()
+            time.sleep(1)
+            page.ele(element.选择第一个试卷).click()
+            page.ele(element.选择试卷确认按钮).click()
+            # 选择试卷(试考)
+            page.ele(element.试考试卷tab栏).click()
+            page.ele(element.添加试卷按钮).click()
+            time.sleep(1)
+            page.ele(element.选择第一个试卷).click()
+            page.ele(element.选择试卷确认按钮).click()
+            # 设置培训证书
+            page.ele(element.整体概况).click()
+            page.ele(element.证书未设置按钮).click()
+            page.ele(element.证书下来框).click()
+            page.ele(element.选择证书).click()
+            page.ele(element.保存按钮).click()
+            # 证书课程上架
+            page.ele(element.整体概况).click()
+            page.ele(element.上架按钮).click()
+            page.ele(element.确认按钮).click()
         except Exception as e:
             # 捕获异常并记录日志
             logger.error(f"测试过程中发生错误: {e}")
         # 断言描述信息是否符合预期
         assert desc == "证书课程创建成功", f"Unexpected page title: {desc}"
+        assert title == "内部测试学习课程0724", f"Unexpected page title: {title}"
