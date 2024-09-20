@@ -222,3 +222,17 @@ class TestContent:
         # 断言描述信息是否符合预期
         assert desc == "证书课程创建成功", f"Unexpected page title: {desc}"
         assert title == "内部测试学习课程0724", f"Unexpected page title: {title}"
+    @pytest.mark.content1
+    @allure.story("购买证书课程")
+    def test_purchase_certificate(self):
+        try:
+            page.get(element.课程供应商主页)
+            ele = page.ele(element.URL)
+            tab = ele.click.for_new_tab()  # 点击某个链接新建标签页
+            tab.ele(element.Tab(2)).click()
+            tab.ele(element.certificate_course_selection(1)).click()
+            tab.ele(element.立即加购).click()
+            tab.ele(element.加入课程).click()
+            tab.close()
+        except Exception as e:
+            logger.error(f"测试过程中发生错误: {e}")
