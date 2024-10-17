@@ -93,12 +93,12 @@ class TestContent:
         assert text == '已上架', f"Unexpected page title: {text}"
         logger.info("*************** 结束执行用例 ***************")
 
-    @pytest.mark.content1
+    @pytest.mark.content2
     @allure.story("创建证书课程")
     def test_certificate(self):
         try:
             # 打开课程页面
-            page.get("https://content-fbt-uat.class-demo.com/supply/index/course?cType=2")
+            page.get(GentConf().get_env("learning_course_url"))
             # 点击创建按钮
             page.ele('@class=btn btn-primary').click()
             # 输入课程名称
@@ -196,17 +196,19 @@ class TestContent:
             tab.ele('#paper-publish-ok').click()
             tab.close()
             # 选择试卷(正式)
+            time.sleep(3)
             page.ele(element.添加试卷按钮).click()
-            time.sleep(1)
             page.ele(element.选择第一个试卷).click()
             page.ele(element.选择试卷确认按钮).click()
             # 选择试卷(试考)
+            time.sleep(2)
             page.ele(element.试考试卷tab栏).click()
             page.ele(element.添加试卷按钮).click()
             time.sleep(1)
             page.ele(element.选择第一个试卷).click()
             page.ele(element.选择试卷确认按钮).click()
             # 设置培训证书
+            time.sleep(1)
             page.ele(element.整体概况).click()
             page.ele(element.证书未设置按钮).click()
             page.ele(element.证书下来框).click()
@@ -216,12 +218,15 @@ class TestContent:
             page.ele(element.整体概况).click()
             page.ele(element.上架按钮).click()
             page.ele(element.确认按钮).click()
+            xiajia = page.ele('#unPublish').text
         except Exception as e:
             # 捕获异常并记录日志
             logger.error(f"测试过程中发生错误: {e}")
         # 断言描述信息是否符合预期
         assert desc == "证书课程创建成功", f"Unexpected page title: {desc}"
         assert title == "内部测试学习课程0724", f"Unexpected page title: {title}"
+        assert xiajia == "下架", f"Unexpected page title: {xiajia}"
+
     @pytest.mark.content1
     @allure.story("购买证书课程")
     def test_purchase_certificate(self):
@@ -231,8 +236,16 @@ class TestContent:
             tab = ele.click.for_new_tab()  # 点击某个链接新建标签页
             tab.ele(element.Tab(2)).click()
             tab.ele(element.certificate_course_selection(1)).click()
-            tab.ele(element.立即加购).click()
-            tab.ele(element.加入课程).click()
+            jiagou = tab.ele(element.证书加购状态).text
+            if jiagou == "立即加购":
+                tab.ele(element.立即加购).click()
+                tab.ele(element.加入课程).click()
+            else:
+                tab.ele(element.证书加购状态).click()
+            number = tab.ele(element.资源总数).text
             tab.close()
+
         except Exception as e:
             logger.error(f"测试过程中发生错误: {e}")
+        assert number == "2", f"Unexpected page title: {number}"
+
