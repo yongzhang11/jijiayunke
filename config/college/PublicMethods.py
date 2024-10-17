@@ -6,6 +6,8 @@ from config.BrowserDriver.drissionpage_driver import DrissionpageDriverConfig
 from DrissionPage.common import Keys
 import os
 
+from testcase.root_test.prodiver_element import element
+
 page = DrissionpageDriverConfig().driver_config()
 
 
@@ -28,6 +30,30 @@ class PublicMethods:
     enrolment：允许自主报名 可取 "1开启"、"2不开启"
     """
 
+    # 主办方登录
+    def sponsor_login(self, username, code):
+        page.get("https://cert-fbt.class-demo.com/login")
+        page.ele('@class=more').click()
+        page.ele('#username').input(username)
+        page.ele('@placeholder=请输入验证码').input(code)
+        page.ele('@class=btn btn-primary btn-block ').click()
+
+    # 后台登录
+    def root_login(self, username, password):
+        page.get("https://root-fbt-uat.class-demo.com/login")
+        page.ele('#username').input(username)
+        page.ele('#pwd').input(password)
+        page.ele('@class=btn btn-primary btn-block ').click()
+
+    # 删除指定供应商当前页
+    def delete_supplier_current(self, root_page):
+        root_page.ele('xpath://html/body/nav/span[1]/a[3]').click()
+        root_page.ele('text:内容供应商名称1').parent(1).next(4).child(1).child(3).click()
+        time.sleep(0.5)
+        root_page.ele('#provider-index-ajax-status-del-confirm-ok').click()
+        time.sleep(0.5)
+        root_page.ele('#provider-index-ajax-status-alert-ok').click()
+
     def creating_skills_programme_classe(self, username, password, skill, class_name, play="在线支付", payment_method=1,
                                          enrolment="1"):
         PublicMethods.login(username, password)
@@ -43,7 +69,7 @@ class PublicMethods:
         page.ele('#addmodel-name').input(class_name)
         page.ele('#addmodel-starttime').click()
         # 日期
-        page.ele('@data-title=r0c{}'.format(3)).check()
+        page.ele('@class=today active start-date active end-date available').check()
         page.ele('#addmodel-endtime').check()
         # 结束时间
         string_without_spaces = page.ele('#addmodel-direction-span').text
@@ -93,7 +119,7 @@ class PublicMethods:
         PublicMethods().class_status()
 
     # 导入功能
-    def import_function(self=None):
+    def import_function(self=None, ):
         time.sleep(1)
         page.ele('xpath://span[@class="buttons-wrapper"]/a[{}]'.format(2)).click()
         # page.set.upload_files('D:\\jijiayunke\\config\\college\\file\\学员导入模板.xlsx')
