@@ -11,3 +11,19 @@ class element:
     选择第一个试卷 = 'xpath://tbody/tr[1]/td[1]/label/span'
     添加试卷按钮 = '@class=btn btn-primary addForm'
     试考试卷tab栏 = 'xpath://*[@id="myTab"]/li[2]/a'
+    # 课程供应商主页
+    课程供应商主页 = 'https://content-fbt-uat.class-demo.com/supply/index/index'
+    URL = '#site-url'
+
+    def Tab(self):
+        证书课程TAB栏 = 'xpath://div[@class="nav-tab"]/a[{}]'.format(self)
+        return 证书课程TAB栏
+
+    def certificate_course_selection(self):
+        证书课程选择 = 'xpath://ul[@class="list-course-card hover-border"]/li[{}]'.format(self)
+        return 证书课程选择
+    立即加购 = '@class=btn btn-warning buy'
+    证书加购状态 = "@class=handle"
+    加入课程 = '@class=btn btn-primary  buy-dialog-ok'
+    加入后的证书课程名称 = '@class=text text-overflow'
+    资源总数 = 'xpath://html/body/div[1]/main/div/div/div/div/div[4]/div[1]/div[2]/div[1]/div[1]'
