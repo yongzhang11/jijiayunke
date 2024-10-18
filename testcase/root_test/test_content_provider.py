@@ -21,6 +21,7 @@ def some_data():
 root_page = DrissionpageDriverConfig().driver_config()
 random_number = '1' + ''.join([str(random.randint(0, 9)) for _ in range(10)])
 
+
 @allure.feature("后台管理")
 class TestRootManagement:
     @pytest.mark.RootManagement
@@ -66,7 +67,7 @@ class TestRootManagement:
         except Exception as e:
             logger.error(e)
 
-    @pytest.mark.RootManagement1
+    @pytest.mark.RootManagement
     @allure.story("院校管理")
     def test_create_organizer(self):
         try:
@@ -95,5 +96,40 @@ class TestRootManagement:
             root_page.ele(element.select('线下支付')).next(1).child(1).child(1).click()
             root_page.ele(element.select('辅导员互动')).next(1).child(1).child(1).click()
             root_page.ele(element.创建).click()
+        except Exception as e:
+            logger.error(e)
+
+    @pytest.mark.RootManagement1
+    @allure.story("院校编辑")
+    def test_create_agent(self):
+        try:
+            root_page.ele(element.select('院校管理')).click()
+            root_page.ele(element.select('院校名称1')).next(11).child(1).child(2).click()
+            root_page.ele(element.select('院校管理')).click()
+            root_page.ele(element.select('院校名称1')).next(10).child(1).child(1).click()
+            time.sleep(0.5)
+            root_page.ele(element.select('上传自有资源')).next(1).child(1).child(1).click()
+            root_page.ele('@class=el-select__input').click()
+            root_page.ele('xpath://ul[@class="el-scrollbar__view el-select-dropdown__list"]/li[3]').click()
+            root_page.ele('@class=el-select__input').click()
+            root_page.ele('text:保存').click()
+            root_page.ele('text:功能设置').click()
+            # 周期管理
+            root_page.ele('#teaching-material-contract').click()
+            root_page.ele('text:修改').click()
+            root_page.ele('#contract-duration').clear()
+            root_page.ele('#contract-duration').input('10')
+            root_page.ele('#contract-num').clear()
+            root_page.ele('#contract-num').input('10')
+            root_page.ele('#contract-endTime').click()
+            root_page.ele('@class=table-condensed').child(2).child(5).child(4).click()
+            root_page.ele('text:保存').click()
+            root_page.ele('text:返回周期管理').click()
+            # 教材资源包管理
+            root_page.ele('text:教材资源包管理').click()
+            root_page.ele('@class=btn btn-outline-primary textBookResourceAdd').click()
+            time.sleep(0.5)
+            root_page.ele('@class=custom-control-indicator').click()
+            root_page.ele('#relation-course').click()
         except Exception as e:
             logger.error(e)
